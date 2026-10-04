@@ -22,7 +22,7 @@ class FraudRuleEngineTest {
 
     private static TransactionEvent sampleTx() {
         return new TransactionEvent(
-                TransactionEvent.EventType.TransactionInitiated,
+                TransactionEvent.EventType.TRANSACTION_INITIATED,
                 UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(),
                 new BigDecimal("500"), "USD", "device-1", "Panipat, IN", Instant.now());
     }

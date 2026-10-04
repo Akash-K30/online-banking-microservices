@@ -26,7 +26,7 @@ public class TransactionEventConsumer {
 
     @KafkaListener(topics = "${app.kafka.topics.transaction-events}")
     public void onTransactionEvent(TransactionEvent event) {
-        if (event.getEventType() != TransactionEvent.EventType.TransactionInitiated) {
+        if (event.getEventType() != TransactionEvent.EventType.TRANSACTION_INITIATED) {
             log.trace("Ignoring {} event for transaction {}", event.getEventType(), event.getTransactionId());
             return;
         }

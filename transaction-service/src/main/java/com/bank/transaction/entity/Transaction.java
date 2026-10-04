@@ -19,7 +19,7 @@ import java.util.UUID;
 public class Transaction {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Column(name = "from_account_id", nullable = false)
@@ -58,7 +58,6 @@ public class Transaction {
 
     public static Transaction newTransfer(UUID fromAccountId, UUID toAccountId, BigDecimal amount, String idempotencyKey) {
         Transaction transaction = new Transaction();
-        transaction.id = UUID.randomUUID();
         transaction.fromAccountId = fromAccountId;
         transaction.toAccountId = toAccountId;
         transaction.amount = amount;

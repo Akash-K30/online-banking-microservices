@@ -17,9 +17,9 @@ import java.util.UUID;
 public class TransactionEvent {
 
     public enum EventType {
-        TransactionInitiated,
-        TransactionCompleted,
-        TransactionFailed
+        TRANSACTION_INITIATED,
+        TRANSACTION_COMPLETED,
+        TRANSACTION_FAILED
     }
 
     private EventType eventType;
