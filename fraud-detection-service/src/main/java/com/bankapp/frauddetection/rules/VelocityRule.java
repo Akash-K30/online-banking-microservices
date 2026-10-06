@@ -34,7 +34,7 @@ public class VelocityRule implements FraudRule {
     @Override
     public RuleResult evaluate(TransactionEvent tx) {
         UUID accountId = tx.getFromAccountId();
-        Instant now = tx.getTimestamp() != null ? tx.getTimestamp() : Instant.now();
+        Instant now = tx.getOccurredAt() != null ? tx.getOccurredAt() : Instant.now();
 
         Deque<Instant> window = recentTransactionsByAccount.computeIfAbsent(accountId, id -> new ConcurrentLinkedDeque<>());
 

@@ -1,5 +1,6 @@
 package com.bank.transaction.dto;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -7,6 +8,7 @@ public record FraudVerdictMessage(
         UUID transactionId,
         FraudVerdictType verdict,
         double score,
-        List<String> reasons
+        List<String> reasons,
+        Instant evaluatedAt
 ) {
 }

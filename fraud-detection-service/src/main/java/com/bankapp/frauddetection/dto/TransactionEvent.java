@@ -22,7 +22,7 @@ public class TransactionEvent {
         TRANSACTION_FAILED
     }
 
-    private EventType eventType;
+    private EventType type;
     private UUID transactionId;
     private UUID fromAccountId;
     private UUID toAccountId;
@@ -30,5 +30,5 @@ public class TransactionEvent {
     private String currency;
     private String deviceId;
     private String location;
-    private Instant timestamp;
+    private Instant occurredAt;
 }
