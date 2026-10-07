@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.Instant;
 import java.util.List;
@@ -32,7 +34,8 @@ public class FraudCheck {
     @Column(name = "verdict", nullable = false, length = 16)
     private String verdict;
 
-    @Convert(converter = JsonListConverter.class)
+    @Convert(disableConversion = true)
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "reasons", columnDefinition = "jsonb")
     private List<String> reasons;
 
