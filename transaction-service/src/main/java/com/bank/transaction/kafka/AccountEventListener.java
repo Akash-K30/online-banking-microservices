@@ -20,13 +20,20 @@ public class AccountEventListener {
         this.ownerCacheRepository = ownerCacheRepository;
     }
 
-    @KafkaListener(topics = KafkaTopics.ACCOUNT_EVENTS, groupId = "${spring.kafka.consumer.group-id}")
+    @KafkaListener(
+            topics = "account.events",
+            groupId = "transaction-service",
+            properties = {
+                    "spring.json.use.type.headers=false",
+                    "spring.json.value.default.type=com.bank.transaction.dto.AccountEventMessage"
+
+            })
     public void onAccountEvent(AccountEventMessage message) {
 
-        if (message.type() == AccountEventType.ACCOUNT_OPENED && message.userId() != null) {
+        if (message.entryType() == AccountEventType.ACCOUNT_OPENED && message.userId() != null) {
             ownerCacheRepository.save(new AccountOwnerCache(message.accountId(), message.userId()));
         } else {
-            log.debug("Ignoring account event {} for account {}", message.type(), message.accountId());
+            log.debug("Ignoring account event {} for account {}", message.entryType(), message.accountId());
         }
     }
 }

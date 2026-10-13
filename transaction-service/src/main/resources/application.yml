@@ -2,5 +2,10 @@ spring:
   application:
     name: transaction-service
 
+
+
   config:
     import: optional:configserver:http://localhost:8888
+logging:
+  level:
+    org.springframework.kafka.listener: DEBUG

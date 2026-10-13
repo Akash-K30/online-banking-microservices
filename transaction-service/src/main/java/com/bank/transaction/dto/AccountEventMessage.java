@@ -6,11 +6,11 @@ import java.util.UUID;
 
 
 public record AccountEventMessage(
-        AccountEventType type,
+        AccountEventType entryType,
         UUID accountId,
         UUID userId,
         BigDecimal amount,
-        String refId,
+        String TransactionRef,
         Instant occurredAt
 ) {
 }

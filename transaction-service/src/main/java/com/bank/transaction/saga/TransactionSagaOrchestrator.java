@@ -61,7 +61,7 @@ public class TransactionSagaOrchestrator {
             return;
         }
         transaction.transitionTo(TransactionStatus.HOLD_PLACED);
-        transactionRepository.save(transaction);
+        transaction = transactionRepository.saveAndFlush(transaction);
 
         try {
             accountServiceClient.debit(transaction.getFromAccountId(), transaction.getAmount(), refId);
@@ -70,8 +70,13 @@ public class TransactionSagaOrchestrator {
             releaseHoldThenFail(transaction, "Could not debit source account: " + e.getMessage());
             return;
         }
-        transaction.transitionTo(TransactionStatus.DEBITED);
-        transactionRepository.save(transaction);
+        try {
+            transaction.transitionTo(TransactionStatus.DEBITED);
+            transaction =  transactionRepository.saveAndFlush(transaction);
+        } catch (Exception e) {
+            log.error("State update after debit failed for {}", transaction.getId(), e);
+            throw e;
+        }
 
         try {
             accountServiceClient.credit(transaction.getToAccountId(), transaction.getAmount(), refId);
@@ -83,13 +88,15 @@ public class TransactionSagaOrchestrator {
         }
 
         transaction.transitionTo(TransactionStatus.COMPLETED);
-        transactionRepository.save(transaction);
+        transaction = transactionRepository.saveAndFlush(transaction);
         eventProducer.publish(TransactionEventMessage.completed(
                 transaction.getId(), transaction.getFromAccountId(), transaction.getToAccountId(), transaction.getAmount()));
     }
 
     /** Called by {@code FraudCheckState} when the verdict is BLOCK or REVIEW. */
-    public void failWithoutCompensation(Transaction transaction, String reason) {
+    public void failWithoutCompensation(Transaction stale, String reason) {
+        Transaction transaction = transactionRepository.findById(stale.getId())
+                .orElseThrow(() -> new TransactionNotFoundException(stale.getId()));
         transaction.fail(reason);
         transactionRepository.save(transaction);
         eventProducer.publish(TransactionEventMessage.failed(

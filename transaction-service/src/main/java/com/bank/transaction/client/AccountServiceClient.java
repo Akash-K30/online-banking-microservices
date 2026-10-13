@@ -4,6 +4,7 @@ import com.bank.transaction.exception.AccountServiceException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
@@ -40,8 +41,25 @@ public class AccountServiceClient {
     private void post(String path, Object body) {
         try {
             restTemplate.postForEntity(baseUrl + path, body, Void.class);
+        } catch (RestClientResponseException e) {
+            throw new AccountServiceException(
+                    "Account Service returned HTTP "
+                            + e.getStatusCode()
+                            + " for "
+                            + path
+                            + ". Response: "
+                            + e.getResponseBodyAsString(),
+                    e
+            );
+
         } catch (RestClientException e) {
-            throw new AccountServiceException("Account Service call failed: " + path, e);
+            throw new AccountServiceException(
+                    "Account Service request failed for "
+                            + path
+                            + ": "
+                            + e.getMessage(),
+                    e
+            );
         }
     }
 

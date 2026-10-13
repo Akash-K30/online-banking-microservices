@@ -14,7 +14,13 @@ public class FraudVerdictListener {
         this.orchestrator = orchestrator;
     }
 
-    @KafkaListener(topics = KafkaTopics.FRAUD_VERDICTS, groupId = "${spring.kafka.consumer.group-id}")
+    @KafkaListener(
+            topics = "fraud.verdicts",
+            groupId = "transaction-service",
+            properties = {
+                    "spring.json.use.type.headers=false",
+                    "spring.json.value.default.type=com.bank.transaction.dto.FraudVerdictMessage"
+            })
     public void onFraudVerdict(FraudVerdictMessage message) {
         orchestrator.handleFraudVerdict(message);
     }
